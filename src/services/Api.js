@@ -30,7 +30,6 @@ module.exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "Authentication failed" });
     }
-    console.log(password, user.password);
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Authentication failed" });
@@ -79,31 +78,40 @@ module.exports.getCourse = async (req, res) => {
   }
 };
 
+module.exports.getAllStudentInfo = async (req, res) => {
+try {
+  const allCourse = await userModel.find();
+  if (!allCourse) {
+    return res.status(404).json({ message: 'No courses found' });
+  }
+  res.status(200).json(allCourse);
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ message: 'Internal server error' });
+}
+};
+
 module.exports.updateUser = async (req, res) => {
   try {
-    const { userId, name, password, email } = req.body;
+    let userId = req.body._id
+    let data = req.body
     if (!userId) {
       return res.status(400).json({ message: 'Invalid input data' });
     }
-    const updateFields = {};
-    if (name) {
-      updateFields.name = name;
-    }
-    if (password) {
-      updateFields.password = password;
-    }
-    if (email) {
-      updateFields.email = email;
-    }
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      updateFields,
-      { new: true }
+    
+    const updatedUser = await userModel.updateOne(
+      {_id:userId},
+      {
+        $set:{
+          ...data
+        }
+      }
     );
+
+    console.log(updatedUser,"updatedUserupdatedUserupdatedUser");
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
-
     res.status(200).json({ message: 'User updated successfully', user: updatedUser });
   } catch (error) {
     res.status(500).json({ message: error.message });
