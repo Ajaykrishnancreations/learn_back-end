@@ -59,9 +59,22 @@ module.exports.course = async (req, res) => {
   }
 };
 
+module.exports.getAllStudentInfo = async (req, res) => {
+try {
+  const allCourse = await userModel.find();
+  if (!allCourse) {
+    return res.status(404).json({ message: 'No courses found' });
+  }
+  res.status(200).json(allCourse);
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ message: 'Internal server error' });
+}
+};
+
 module.exports.getCourse = async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = req.body;
     const user = await userModel.findOne(email);
     if(!user) 
     {
@@ -78,18 +91,22 @@ module.exports.getCourse = async (req, res) => {
   }
 };
 
-module.exports.getAllStudentInfo = async (req, res) => {
-try {
-  const allCourse = await userModel.find();
-  if (!allCourse) {
-    return res.status(404).json({ message: 'No courses found' });
+module.exports.getUserDetais = async (req, res) => {
+  try {
+    const email = req.params;
+    const user = await userModel.findOne(email);
+    if(!user) 
+    {
+      return res.status(401).json({ message: "Given Mail-id is not found" });
+    }
+    else{
+      res.status(200).json(user);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
-  res.status(200).json(allCourse);
-} catch (error) {
-  console.error(error);
-  res.status(500).json({ message: 'Internal server error' });
-}
-};
+  };
 
 module.exports.updateUser = async (req, res) => {
   try {
