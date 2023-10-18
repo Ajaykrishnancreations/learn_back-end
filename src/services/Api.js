@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
-const courses = require("../models/course")
+const courses = require("../models/course");
+const addNewPost = require("../models/newPost")
 
 const auth = require("../helpers/auth");
 
@@ -59,6 +60,21 @@ module.exports.course = async (req, res) => {
   }
 };
 
+module.exports.addNewPost = async (req, res) => {
+  try {
+    const {name,img, description} = req.body;
+    const posts = {
+      name,
+      img,
+      description,
+    };
+    await addNewPost(posts).save();
+    res.status(201).json({ message: "post added successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports.getAllStudentInfo = async (req, res) => {
 try {
   const allCourse = await userModel.find();
@@ -81,6 +97,19 @@ module.exports.getCourse = async (req, res) => {
       return res.status(401).json({ message: "Given Mail-id is not found" });
     }
     const allCourse = await courses.find();
+    if (!allCourse) {
+      return res.status(404).json({ message: 'No courses found' });
+    }
+    res.status(200).json(allCourse);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+module.exports.getPosts = async (req, res) => {
+  try {
+    const allCourse = await addNewPost.find();
     if (!allCourse) {
       return res.status(404).json({ message: 'No courses found' });
     }
