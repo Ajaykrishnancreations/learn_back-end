@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
 const courses = require("../models/course");
-const addNewPost = require("../models/newPost")
+const addNewPost = require("../models/newPost");
+const jwt = require("jsonwebtoken");
 
 const auth = require("../helpers/auth");
 
@@ -163,3 +164,48 @@ module.exports.updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+module.exports.courseUpdate = async (req, res) => {
+  try {
+    let userId = req.body._id
+    let data = req.body
+    if (!userId) {
+      return res.status(400).json({ message: 'Invalid input data' });
+    }
+    const updatedUser = await courses.updateOne(
+      {_id:userId},
+      {
+        $set:{
+          ...data
+        }
+      }
+    );
+    console.log(updatedUser,"updatedUserupdatedUserupdatedUser");
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ message: 'User updated successfully', user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports.RefreshToken = async (req, res) => {
+  try {
+    const {refreshToken} = req?.body;
+    console.log(refreshToken,"refreshTokensssrefreshTokensssrefreshTokensss");
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
+      if (err) {
+        res.status(401);
+        throw new Error(err.message);
+      }
+      req.user = decoded.user;
+      const accessToken =auth.generateAccessToken({userId:decoded?.userId,userName:decoded?.name,userEmail:decoded?.email});
+      const refreshToken =auth.generateRefreshToken({userId:decoded?.userId,userName:decoded?.name,userEmail:decoded?.email});
+      res.status(200).json({ accessToken, refreshToken });
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message});
+  }
+}

@@ -1,19 +1,23 @@
 const {Router} = require("express");
-const {register,login,course,getCourse,updateUser,getAllStudentInfo,getUserDetais,addNewPost,getPosts} = require("../services/Api");
+const {register,login,course,getCourse,updateUser,getAllStudentInfo,getUserDetais,addNewPost,getPosts,courseUpdate,RefreshToken} = require("../services/Api");
 const router = Router();
+const validateToken = require("../helpers/validateTokenHandler");
 
 router.post("/register",register);
 
 router.post("/login",login);
 
-router.post("/addcourse",course)
-router.get('/getcourse',getCourse);
-router.put('/updateUser',updateUser);
+router.post("/addcourse",validateToken,course)
+router.get('/getcourse',validateToken,getCourse);
+router.put('/updateUser',validateToken,updateUser);
 
-router.get('/getAllStudentInfo',getAllStudentInfo);
-router.get('/getUserDetais/:email',getUserDetais);
+router.get('/getAllStudentInfo',validateToken,getAllStudentInfo) ;
+router.get('/getUserDetais/:email',validateToken,getUserDetais);
 
+router.post("/addNewPost",validateToken,addNewPost)
+router.get('/getPosts',validateToken,getPosts);
 
-router.post("/addNewPost",addNewPost)
-router.get('/getPosts',getPosts);
+router.put('/courseUpdate',validateToken,courseUpdate);
+
+router.post("/RefreshToken",RefreshToken);
 module.exports = router;
