@@ -7,6 +7,7 @@ const display_user_routes = require("./src/routes/display_user_route");
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(express.static("./uploads"))
 app.use(cors());
 app.use("/",loginroutes);
 app.use("/view",display_user_routes);

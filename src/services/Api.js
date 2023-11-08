@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const userModel = require("../models/user");
 const courses = require("../models/course");
 const addNewPost = require("../models/newPost");
+const videoCollection= require("../models/video");
 const jwt = require("jsonwebtoken");
 
 const auth = require("../helpers/auth");
@@ -209,3 +210,26 @@ module.exports.RefreshToken = async (req, res) => {
     res.status(500).json({ message: error.message});
   }
 }
+
+module.exports.addNewVideo = async (title,video) => {
+  try {
+    const posts = { title, video };
+  return  await videoCollection(posts).save();
+   
+  } catch (error) {
+   return error.message
+  }
+};
+
+module.exports.getVideos = async (req, res) => {
+  try {
+    const allVideo = await videoCollection.find();
+    if (!allVideo) {
+      return res.status(404).json({ message: 'No courses found' });
+    }
+    res.status(200).json(allVideo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

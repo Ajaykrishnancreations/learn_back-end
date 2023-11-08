@@ -12,7 +12,7 @@ function generateAccessToken(payload) {
 }
 
 function generateRefreshToken(payload) {
-  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '30m' });
+  return jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '24h' });
 }
 
 module.exports = {
