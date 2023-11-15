@@ -23,17 +23,17 @@ router.post("/RefreshToken",RefreshToken);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, './uploads'); // Define the destination folder for uploaded files
+      cb(null, './uploads');
     },
     filename: (req, file, cb) => {
-      cb(null, file.originalname); // Use the original filename for the uploaded file
+      cb(null, file.originalname);
     },
   });
   const upload = multer({ storage });  
 router.post('/addNewVideo', upload.single('video'), async (req, res) => {
     try {
       const { title } = req.body;
-      const video = req.file.filename; // Multer stores the file path in req.file.path
+      const video = req.file.filename;
       console.log(video,"videovideovideo");
       const newVideo = await addNewVideo(title, video);
       console.log(newVideo)
