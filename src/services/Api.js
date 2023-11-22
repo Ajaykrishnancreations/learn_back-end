@@ -227,6 +227,7 @@ module.exports.getVideos = async (req, res) => {
     if (!allVideo) {
       return res.status(404).json({ message: 'No courses found' });
     }
+    
     res.status(200).json(allVideo);
   } catch (error) {
     console.error(error);
