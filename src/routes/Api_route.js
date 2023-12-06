@@ -28,8 +28,11 @@ const bucket = storage.bucket("varsh-storage");
 
 router.get("/getUploadVideos", async (req, res) => {
   try {
-    const [files] = await bucket.getFiles();
-    res.send([files]);
+    const [files] = await bucket.getFiles({prefix:"Low/"});
+    let result=files.map(x=>{
+      return x.metadata.name.split("/")[1]
+    })
+    res.send(result);
     console.log("Success");
   } catch (error) {
     res.send("Error:" + error);
